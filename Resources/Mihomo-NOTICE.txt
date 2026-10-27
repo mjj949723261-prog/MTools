@@ -1,0 +1,3 @@
+Vorssaint bundles Mihomo Meta v1.19.33 from https://github.com/MetaCubeX/mihomo.
+The bundled Mihomo executable is licensed under GNU General Public License v3.0.
+Its upstream source and license are available at https://github.com/MetaCubeX/mihomo.
