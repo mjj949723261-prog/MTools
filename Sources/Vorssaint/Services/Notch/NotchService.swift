@@ -547,7 +547,16 @@ final class NotchService: ObservableObject {
     var showsCompactActivityPicker: Bool {
         (inside || activityPickerMenuOpen) && !hiddenInFullscreen && !hiddenUntilHover && !expanded && !peeking
             && !dragPlaceholder && notice == nil && captureControls == nil
-            && compactActivities.count > 1
+            && compactActivities.count > 1 && (!opensProxyPageOnHover || activityPickerMenuOpen)
+    }
+
+    /// The proxy strip is a direct entry point to its page. Showing the
+    /// activity picker first makes a hover opening look like two expansions.
+    /// Prefer it whenever the core is active, even if another activity such as
+    /// agent monitoring currently owns the compact strip.
+    private var opensProxyPageOnHover: Bool {
+        hasProxyActivity && hoverOpeningEnabled
+            && UserDefaults.standard.bool(forKey: DefaultsKey.notchHoverExpands)
     }
 
     var compactActivityPickerLayout: NotchActivityPickerLayout {
@@ -1619,7 +1628,7 @@ final class NotchService: ObservableObject {
                 // Following the closed island ends as it opens or peeks.
                 self.removeHoverExitMonitors()
                 if UserDefaults.standard.bool(forKey: DefaultsKey.notchHoverExpands) {
-                    self.open(takeFocus: false)
+                    self.open(self.hasProxyActivity ? .proxy : nil, takeFocus: false)
                 } else {
                     self.mutatePresentation(transitionContent: .reveal) { self.peeking = true }
                     self.provideHapticFeedback()
